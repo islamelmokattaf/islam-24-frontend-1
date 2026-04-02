@@ -12,6 +12,13 @@ import type {
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN || "";
 
+// ─── Empty Responses (used when Strapi is unreachable at build time) ─
+
+const EMPTY_LIST_RESPONSE = <T,>(): StrapiResponse<T[]> => ({
+  data: [] as T[],
+  meta: { pagination: { page: 1, pageSize: 25, pageCount: 0, total: 0 } },
+});
+
 // ─── Base Fetch ─────────────────────────────────────────────────────
 
 interface FetchOptions {
@@ -53,8 +60,25 @@ async function strapiFetch<T>({ path, params, revalidate = 60, tags }: FetchOpti
   return res.json();
 }
 
+// ─── Safe Fetch Wrapper ─────────────────────────────────────────────
+// Wraps strapiFetch with a fallback value for build-time failures.
+// During build on Vercel, Strapi may be unreachable → return fallback
+// instead of crashing. At runtime, ISR will retry and get real data.
+
+async function safeFetch<T>(options: FetchOptions, fallback: T): Promise<T> {
+  try {
+    return await strapiFetch<T>(options);
+  } catch (error) {
+    console.warn(
+      `[Strapi] Failed to fetch ${options.path} — using fallback. ` +
+      `This is expected during build if Strapi is not reachable. ` +
+      `Error: ${error instanceof Error ? error.message : error}`
+    );
+    return fallback;
+  }
+}
+
 // ─── Helper: Build Strapi image URL ─────────────────────────────────
-// Strapi v5: media is a flat object { url, width, height, ... }
 
 export function getStrapiMediaUrl(url: string | undefined | null): string {
   if (!url) return "/placeholder.jpg";
@@ -65,36 +89,42 @@ export function getStrapiMediaUrl(url: string | undefined | null): string {
 // ─── Pages ──────────────────────────────────────────────────────────
 
 export async function getPages(): Promise<Page[]> {
-  const res = await strapiFetch<StrapiResponse<Page[]>>({
-    path: "/pages",
-    params: {
-      "populate[content][on][blocks.hero][populate]": "*",
-      "populate[content][on][blocks.text-block][populate]": "*",
-      "populate[content][on][blocks.image-block][populate]": "*",
-      "populate[content][on][blocks.cta-block][populate]": "*",
-      "populate[content][on][blocks.services-block][populate][items]": "true",
-      "populate[seo][populate]": "*",
+  const res = await safeFetch<StrapiResponse<Page[]>>(
+    {
+      path: "/pages",
+      params: {
+        "populate[content][on][blocks.hero][populate]": "*",
+        "populate[content][on][blocks.text-block][populate]": "*",
+        "populate[content][on][blocks.image-block][populate]": "*",
+        "populate[content][on][blocks.cta-block][populate]": "*",
+        "populate[content][on][blocks.services-block][populate][items]": "true",
+        "populate[seo][populate]": "*",
+      },
+      tags: ["pages"],
     },
-    tags: ["pages"],
-  });
+    EMPTY_LIST_RESPONSE<Page>()
+  );
   return res.data;
 }
 
 export async function getPageBySlug(slug: string): Promise<Page | null> {
-  const res = await strapiFetch<StrapiResponse<Page[]>>({
-    path: "/pages",
-    params: {
-      "filters[slug][$eq]": slug,
-      "populate[content][on][blocks.hero][populate]": "*",
-      "populate[content][on][blocks.text-block][populate]": "*",
-      "populate[content][on][blocks.image-block][populate]": "*",
-      "populate[content][on][blocks.cta-block][populate]": "*",
-      "populate[content][on][blocks.services-block][populate][items]": "true",
-      "populate[seo][populate]": "*",
+  const res = await safeFetch<StrapiResponse<Page[]>>(
+    {
+      path: "/pages",
+      params: {
+        "filters[slug][$eq]": slug,
+        "populate[content][on][blocks.hero][populate]": "*",
+        "populate[content][on][blocks.text-block][populate]": "*",
+        "populate[content][on][blocks.image-block][populate]": "*",
+        "populate[content][on][blocks.cta-block][populate]": "*",
+        "populate[content][on][blocks.services-block][populate][items]": "true",
+        "populate[seo][populate]": "*",
+      },
+      tags: ["pages"],
+      revalidate: 60,
     },
-    tags: ["pages"],
-    revalidate: 60,
-  });
+    EMPTY_LIST_RESPONSE<Page>()
+  );
 
   return res.data?.[0] ?? null;
 }
@@ -125,26 +155,28 @@ export async function getArticles(options?: {
     params["filters[is_featured][$eq]"] = String(options.featured);
   }
 
-  return strapiFetch<StrapiResponse<Article[]>>({
-    path: "/articles",
-    params,
-    tags: ["articles"],
-  });
+  return safeFetch<StrapiResponse<Article[]>>(
+    { path: "/articles", params, tags: ["articles"] },
+    EMPTY_LIST_RESPONSE<Article>()
+  );
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
-  const res = await strapiFetch<StrapiResponse<Article[]>>({
-    path: "/articles",
-    params: {
-      "filters[slug][$eq]": slug,
-      "populate[featured_image]": "*",
-      "populate[author_image]": "*",
-      "populate[category][populate][parent]": "*",
-      "populate[seo][populate]": "*",
+  const res = await safeFetch<StrapiResponse<Article[]>>(
+    {
+      path: "/articles",
+      params: {
+        "filters[slug][$eq]": slug,
+        "populate[featured_image]": "*",
+        "populate[author_image]": "*",
+        "populate[category][populate][parent]": "*",
+        "populate[seo][populate]": "*",
+      },
+      tags: ["articles"],
+      revalidate: 60,
     },
-    tags: ["articles"],
-    revalidate: 60,
-  });
+    EMPTY_LIST_RESPONSE<Article>()
+  );
 
   return res.data?.[0] ?? null;
 }
@@ -154,18 +186,21 @@ export async function getRelatedArticles(
   excludeSlug: string,
   limit = 3
 ): Promise<Article[]> {
-  const res = await strapiFetch<StrapiResponse<Article[]>>({
-    path: "/articles",
-    params: {
-      "filters[category][slug][$eq]": categorySlug,
-      "filters[slug][$ne]": excludeSlug,
-      "pagination[pageSize]": String(limit),
-      "sort[0]": "published_date:desc",
-      "populate[featured_image]": "*",
-      "populate[category]": "*",
+  const res = await safeFetch<StrapiResponse<Article[]>>(
+    {
+      path: "/articles",
+      params: {
+        "filters[category][slug][$eq]": categorySlug,
+        "filters[slug][$ne]": excludeSlug,
+        "pagination[pageSize]": String(limit),
+        "sort[0]": "published_date:desc",
+        "populate[featured_image]": "*",
+        "populate[category]": "*",
+      },
+      tags: ["articles"],
     },
-    tags: ["articles"],
-  });
+    EMPTY_LIST_RESPONSE<Article>()
+  );
 
   return res.data;
 }
@@ -173,32 +208,38 @@ export async function getRelatedArticles(
 // ─── Categories ─────────────────────────────────────────────────────
 
 export async function getCategories(): Promise<Category[]> {
-  const res = await strapiFetch<StrapiResponse<Category[]>>({
-    path: "/categories",
-    params: {
-      "populate[parent]": "*",
-      "populate[children]": "*",
-      "populate[seo][populate]": "*",
+  const res = await safeFetch<StrapiResponse<Category[]>>(
+    {
+      path: "/categories",
+      params: {
+        "populate[parent]": "*",
+        "populate[children]": "*",
+        "populate[seo][populate]": "*",
+      },
+      tags: ["categories"],
+      revalidate: 300,
     },
-    tags: ["categories"],
-    revalidate: 300,
-  });
+    EMPTY_LIST_RESPONSE<Category>()
+  );
   return res.data;
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  const res = await strapiFetch<StrapiResponse<Category[]>>({
-    path: "/categories",
-    params: {
-      "filters[slug][$eq]": slug,
-      "populate[parent]": "*",
-      "populate[children]": "*",
-      "populate[articles][populate][featured_image]": "*",
-      "populate[articles][populate][category]": "*",
-      "populate[seo][populate]": "*",
+  const res = await safeFetch<StrapiResponse<Category[]>>(
+    {
+      path: "/categories",
+      params: {
+        "filters[slug][$eq]": slug,
+        "populate[parent]": "*",
+        "populate[children]": "*",
+        "populate[articles][populate][featured_image]": "*",
+        "populate[articles][populate][category]": "*",
+        "populate[seo][populate]": "*",
+      },
+      tags: ["categories"],
     },
-    tags: ["categories"],
-  });
+    EMPTY_LIST_RESPONSE<Category>()
+  );
 
   return res.data?.[0] ?? null;
 }
@@ -216,7 +257,6 @@ export async function getNavigation(): Promise<Navigation | null> {
       tags: ["navigation"],
       revalidate: 300,
     });
-    // Strapi v5 single types: data is the object directly
     return res.data ?? null;
   } catch {
     return null;
@@ -247,27 +287,35 @@ export async function getAllSlugs(): Promise<{
   articles: string[];
   categories: string[];
 }> {
-  const [pagesRes, articlesRes, categoriesRes] = await Promise.all([
-    strapiFetch<StrapiResponse<{ slug: string }[]>>({
-      path: "/pages",
-      params: { "fields[0]": "slug" },
-      revalidate: 3600,
-    }),
-    strapiFetch<StrapiResponse<{ slug: string }[]>>({
-      path: "/articles",
-      params: { "fields[0]": "slug", "pagination[pageSize]": "1000" },
-      revalidate: 3600,
-    }),
-    strapiFetch<StrapiResponse<{ slug: string }[]>>({
-      path: "/categories",
-      params: { "fields[0]": "slug" },
-      revalidate: 3600,
-    }),
-  ]);
+  try {
+    const [pagesRes, articlesRes, categoriesRes] = await Promise.all([
+      strapiFetch<StrapiResponse<{ slug: string }[]>>({
+        path: "/pages",
+        params: { "fields[0]": "slug" },
+        revalidate: 3600,
+      }),
+      strapiFetch<StrapiResponse<{ slug: string }[]>>({
+        path: "/articles",
+        params: { "fields[0]": "slug", "pagination[pageSize]": "1000" },
+        revalidate: 3600,
+      }),
+      strapiFetch<StrapiResponse<{ slug: string }[]>>({
+        path: "/categories",
+        params: { "fields[0]": "slug" },
+        revalidate: 3600,
+      }),
+    ]);
 
-  return {
-    pages: pagesRes.data.map((p) => p.slug),
-    articles: articlesRes.data.map((a) => a.slug),
-    categories: categoriesRes.data.map((c) => c.slug),
-  };
+    return {
+      pages: pagesRes.data.map((p) => p.slug),
+      articles: articlesRes.data.map((a) => a.slug),
+      categories: categoriesRes.data.map((c) => c.slug),
+    };
+  } catch (error) {
+    console.warn(
+      `[Strapi] Failed to fetch slugs for sitemap — returning empty. ` +
+      `Error: ${error instanceof Error ? error.message : error}`
+    );
+    return { pages: [], articles: [], categories: [] };
+  }
 }
