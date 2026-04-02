@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: "Inter", system-ui, sans-serif;
+    --font-serif: "Instrument Serif", Georgia, serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    background-color: rgb(59 130 246 / 0.2);
+  }
+}
+
+@layer components {
+  /* Prose enhancements for article content */
+  .prose-article {
+    @apply prose prose-lg prose-gray max-w-none;
+    @apply prose-headings:font-semibold prose-headings:tracking-tight;
+    @apply prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4;
+    @apply prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3;
+    @apply prose-p:leading-relaxed;
+    @apply prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline;
+    @apply prose-img:rounded-xl prose-img:shadow-md;
+    @apply prose-blockquote:border-l-blue-500 prose-blockquote:bg-blue-50/50 prose-blockquote:py-1 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic;
+    @apply prose-pre:bg-gray-950 prose-pre:rounded-xl prose-pre:shadow-lg;
+    @apply prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none;
+    @apply prose-li:marker:text-gray-400;
+    @apply prose-hr:border-gray-200;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

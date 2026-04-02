@@ -1,0 +1,187 @@
+// ─── Strapi v5 Base Types ────────────────────────────────────────────
+// Strapi v5 returns flat objects (no "attributes" wrapper)
+
+export interface StrapiResponse<T> {
+  data: T;
+  meta: {
+    pagination?: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+}
+
+// ─── Media (Strapi v5: flat object, no data.attributes wrapper) ─────
+
+export interface StrapiMedia {
+  id: number;
+  url: string;
+  alternativeText: string | null;
+  width: number;
+  height: number;
+  caption?: string | null;
+  formats?: {
+    thumbnail?: StrapiMediaFormat;
+    small?: StrapiMediaFormat;
+    medium?: StrapiMediaFormat;
+    large?: StrapiMediaFormat;
+  };
+}
+
+export interface StrapiMediaFormat {
+  url: string;
+  width: number;
+  height: number;
+}
+
+// ─── SEO Component ──────────────────────────────────────────────────
+
+export interface SEOComponent {
+  id: number;
+  meta_title: string;
+  meta_description: string;
+  og_image?: StrapiMedia | null;
+  canonical_url?: string;
+  no_index?: boolean;
+}
+
+// ─── Navigation ─────────────────────────────────────────────────────
+
+export interface NavLink {
+  id: number;
+  name: string;
+  url: string;
+  is_external: boolean;
+}
+
+export interface SocialLink {
+  id: number;
+  platform: "twitter" | "facebook" | "instagram" | "linkedin" | "youtube" | "tiktok" | "github";
+  url: string;
+}
+
+export interface Navigation {
+  id: number;
+  documentId: string;
+  logo: StrapiMedia | null;
+  logo_text: string;
+  links: NavLink[];
+}
+
+export interface Footer {
+  id: number;
+  documentId: string;
+  copyright_text: string;
+  links: NavLink[];
+  social_links: SocialLink[];
+  description?: string;
+}
+
+// ─── Article ────────────────────────────────────────────────────────
+
+export interface Article {
+  id: number;
+  documentId: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  featured_image: StrapiMedia | null;
+  category: Category | null;
+  author_name: string;
+  author_image: StrapiMedia | null;
+  is_featured: boolean;
+  published_date: string;
+  reading_time: number;
+  seo?: SEOComponent | null;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
+// ─── Category ───────────────────────────────────────────────────────
+
+export interface Category {
+  id: number;
+  documentId: string;
+  name: string;
+  slug: string;
+  description?: string;
+  parent: Category | null;
+  children: Category[];
+  articles: Article[];
+  seo?: SEOComponent | null;
+}
+
+// ─── Dynamic Zone Blocks ────────────────────────────────────────────
+
+export interface HeroBlock {
+  id: number;
+  __component: "blocks.hero";
+  title: string;
+  subtitle?: string;
+  background_image?: StrapiMedia | null;
+  button_text?: string;
+  button_link?: string;
+}
+
+export interface TextBlockData {
+  id: number;
+  __component: "blocks.text-block";
+  heading?: string;
+  content: string;
+}
+
+export interface ImageBlockData {
+  id: number;
+  __component: "blocks.image-block";
+  image: StrapiMedia | null;
+  caption?: string;
+}
+
+export interface CTABlockData {
+  id: number;
+  __component: "blocks.cta-block";
+  title: string;
+  description?: string;
+  button_text: string;
+  button_link: string;
+}
+
+export interface ServiceItem {
+  id: number;
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface ServicesBlockData {
+  id: number;
+  __component: "blocks.services-block";
+  title: string;
+  description?: string;
+  items: ServiceItem[];
+}
+
+export type DynamicZoneBlock =
+  | HeroBlock
+  | TextBlockData
+  | ImageBlockData
+  | CTABlockData
+  | ServicesBlockData;
+
+// ─── Page ───────────────────────────────────────────────────────────
+
+export interface Page {
+  id: number;
+  documentId: string;
+  title: string;
+  slug: string;
+  content: DynamicZoneBlock[];
+  seo?: SEOComponent | null;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
