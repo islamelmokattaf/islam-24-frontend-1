@@ -4,6 +4,8 @@ import { getPageBySlug, getArticles } from "@/lib/api";
 import BlockRenderer from "@/components/blocks/BlockRenderer";
 import ArticleCard from "@/components/blog/ArticleCard";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageBySlug("home");
   const seo = page?.seo;
