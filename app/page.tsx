@@ -157,12 +157,3 @@ export default async function HomePage() {
     </>
   );
 }
-// في المستقبل — لما تضيف تطبيق جديد
-في نفس الملف، ابحث عن:
-typescriptconst FEATURED_APPS = [
-  {
-    slug: "sibaq",
-    ...
-  },
-  // لما تضيف تطبيق جديد، أضفه هنا  ← هنا بالظبط
-];
