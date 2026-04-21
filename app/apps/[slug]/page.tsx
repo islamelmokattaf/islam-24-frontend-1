@@ -39,3 +39,14 @@ export default function AppPage({
     />
   )
 }
+// ادناه عشان لو حبيب اضيف تطبيق تاني 
+//  const APPS: Record<string, { title: string; description: string }> = {
+//   sibaq: {
+//     title: 'سباق الفردوس الأعلى',
+//     description: 'تطبيق إسلامي لتتبع العبادات اليومية وأعمال القلوب والأذكار',
+//   },
+//   adhkar: {                           // ← السطر الجديد
+//     title: 'تطبيق الأذكار',           // ← اسمه
+//     description: 'أذكار الصباح والمساء', // ← وصفه
+//   },
+// }
