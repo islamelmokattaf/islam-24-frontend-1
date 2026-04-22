@@ -61,7 +61,7 @@ body::before {
   z-index: 0;
 }
 
-.app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; }
+.app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding-top: calc(env(safe-area-inset-top) + 58px); }
 
 /* =====================================================================
    📱💻 RESPONSIVE DESIGN — Tablet / Desktop / Landscape
@@ -131,7 +131,11 @@ body::before {
   .tab-content.active#tab-main > .period-tabs,
   .tab-content.active#tab-main > .mini-progress,
   .tab-content.active#tab-main > .adhkar-widget,
-  .tab-content.active#tab-main > .daily-lecture-widget {
+  .tab-content.active#tab-main > .daily-lecture-widget,
+  .tab-content.active#tab-main > #mainDeedsContainer,
+  .tab-content.active#tab-main > .add-task-btn,
+  .tab-content.active#tab-main > #dailyLectureWidget,
+  .tab-content.active#tab-main > .reset-btn {
     grid-column: 1 / -1;
   }
   /* الإنجازات: عرض أوسع ومزيد من الأعمدة */
@@ -192,6 +196,7 @@ body::before {
     margin-right: 4px;
     margin-left: 4px;
     vertical-align: top;
+    cursor: pointer;
   }
   /* الرأس والعنوان أصغر في الوضع الأفقي */
   .header { padding: 10px 20px 8px; }
@@ -205,6 +210,164 @@ body::before {
     margin-left: auto;
     margin-right: auto;
   }
+}
+
+/* ===== مودال عرض الذكر شاشة كاملة في الوضع الأفقي ===== */
+.dhikr-fullscreen-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10,14,26,0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top, 16px) 24px env(safe-area-inset-bottom, 24px);
+}
+.dhikr-fullscreen-modal.open {
+  display: flex;
+  animation: fadeIn 0.2s ease;
+}
+.dhikr-fullscreen-inner {
+  width: 100%;
+  max-width: 700px;
+  background: var(--bg-card2);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 20px;
+  padding: 28px 28px 20px;
+  text-align: center;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.dhikr-fullscreen-num {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.dhikr-fullscreen-text {
+  font-family: 'Scheherazade New', serif;
+  font-size: 24px;
+  color: var(--gold-light);
+  line-height: 2.4;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.dhikr-fullscreen-close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 8px) + 8px);
+  left: 16px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: var(--text);
+  font-size: 20px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10000;
+}
+
+/* ===== مودال قائمة الأذكار الكاملة (الصباح/المساء) في الجوال الأفقي ===== */
+.adhkar-list-fullscreen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10,14,26,0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 12px) 16px env(safe-area-inset-bottom, 16px);
+  overflow: hidden;
+}
+.adhkar-list-fullscreen.open {
+  display: flex;
+  animation: fadeIn 0.2s ease;
+}
+.adhkar-list-fs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 14px;
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+  flex-shrink: 0;
+}
+.adhkar-list-fs-title {
+  font-family: 'Amiri', serif;
+  font-size: 22px;
+  color: var(--gold);
+  font-weight: 700;
+}
+.adhkar-list-fs-progress {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.adhkar-list-fs-close {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: var(--text);
+  font-size: 20px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.adhkar-list-fs-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 6px 14px;
+  -webkit-overflow-scrolling: touch;
+}
+.adhkar-list-fs-item {
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+.adhkar-list-fs-item.done {
+  background: rgba(52,211,153,0.06);
+  border-color: rgba(52,211,153,0.2);
+}
+.adhkar-list-fs-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.adhkar-list-fs-item-num {
+  background: rgba(201,168,76,0.15);
+  border-radius: 50%;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 700;
+}
+.adhkar-list-fs-item-text {
+  font-family: 'Scheherazade New', serif;
+  font-size: 22px;
+  color: var(--gold-light);
+  line-height: 2.3;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.adhkar-list-fs-item-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ===== إصلاحات للوضع الأفقي على الهاتف (landscape mobile, < 768px) ===== */
@@ -431,19 +594,73 @@ body::before {
   font-family: 'Noto Naskh Arabic', serif;
   font-size: 10px;
   cursor: pointer;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
   flex: 1;
   position: relative;
+  border-radius: 14px 14px 0 0;
+  opacity: 0.55;
 }
 
-.bottom-btn .btn-icon { font-size: 22px; }
-.bottom-btn.active { color: var(--gold); }
-.bottom-btn.active .btn-icon {
-  filter: drop-shadow(0 0 6px rgba(201,168,76,0.7));
-  transform: scale(1.15);
+.bottom-btn .btn-icon {
+  font-size: 22px;
+  transition: transform 0.3s ease;
 }
-.bottom-btn.active span:last-child {
+.bottom-btn span:not(.btn-icon):not(.btn-pct-badge) {
+  font-size: 10px;
+  transition: all 0.3s ease;
+}
+
+/* ===== الحالة النشطة: كبسولة بارزة بلون القسم ===== */
+.bottom-btn.active {
+  opacity: 1;
+  color: #fff;
   font-weight: 700;
+  transform: translateY(-3px);
+}
+.bottom-btn.active .btn-icon {
+  font-size: 26px;
+  transform: scale(1.12);
+}
+.bottom-btn.active span:not(.btn-icon):not(.btn-pct-badge) {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* شريط سفلي سميك يحدد القسم النشط */
+.bottom-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12%;
+  right: 12%;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+
+/* ===== ألوان كل قسم (النشط فقط) ===== */
+.bottom-btn[data-tab="main"].active {
+  background: linear-gradient(180deg, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.08) 100%);
+  color: var(--gold);
+}
+.bottom-btn[data-tab="hubb"].active {
+  background: linear-gradient(180deg, rgba(245,180,60,0.22) 0%, rgba(245,180,60,0.08) 100%);
+  color: #F5B43C;
+}
+.bottom-btn[data-tab="qurandhikr"].active {
+  background: linear-gradient(180deg, rgba(96,165,250,0.22) 0%, rgba(96,165,250,0.08) 100%);
+  color: #93C5FD;
+}
+.bottom-btn[data-tab="achievements"].active {
+  background: linear-gradient(180deg, rgba(139,92,246,0.22) 0%, rgba(139,92,246,0.08) 100%);
+  color: #C4B5FD;
+}
+
+/* تخفيف الأيقونات غير النشطة */
+.bottom-btn:not(.active) .btn-icon {
+  filter: grayscale(0.4);
 }
 
 /* شارة النسبة المئوية */
@@ -2577,15 +2794,18 @@ body.light-mode .tasbih-ach-stat {
 .daily-lecture-embed iframe { position: absolute; top:0; left:0; width:100%; height:100%; border:none; }
 /* ===== TOP BAR ===== */
 .top-bar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 80;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: calc(env(safe-area-inset-top) + 10px) 14px 10px;
   background: rgba(10,14,26,0.96);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(201,168,76,0.08);
   max-width: 480px;
   margin: 0 auto;
@@ -2619,8 +2839,10 @@ body.light-mode .tasbih-ach-stat {
   padding: 10px 14px;
   background: rgba(10,14,26,0.95);
   border-bottom: 1px solid rgba(201,168,76,0.08);
-  position: sticky;
-  top: 57px;
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 58px);
+  left: 0;
+  right: 0;
   z-index: 75;
 }
 .search-bar-inner {
@@ -3612,7 +3834,7 @@ img, iframe, video {
 @media (min-width: 768px) and (max-width: 1023px) {
   .app {
     max-width: 720px;
-    padding: 0 14px;
+    padding: calc(env(safe-area-inset-top) + 58px) 14px 0;
   }
   .bottom-nav,
   .top-bar,
@@ -3652,7 +3874,7 @@ img, iframe, video {
   .app {
     max-width: 1200px !important;
     margin: 0 auto !important;
-    padding: 0 24px;
+    padding: calc(env(safe-area-inset-top) + 58px) 24px 0;
   }
   /* كل العناصر المثبّتة التي تستخدم max-width تتبع الحاوية */
   .top-bar,
@@ -3711,6 +3933,7 @@ img, iframe, video {
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
     align-items: stretch;
+    width: 100%;
   }
   #mainDeedsContainer > .section-title {
     grid-column: 1 / -1;
@@ -3718,6 +3941,18 @@ img, iframe, video {
   }
   #mainDeedsContainer > .deed-card {
     margin-bottom: 0;
+    height: 100%;
+  }
+  /* التاب الرئيسي يملأ العرض كاملاً على الديسكتوب */
+  #tab-main.active {
+    padding: 0 4px;
+  }
+  /* إزالة القيد على عرض .app في قسم العبادات */
+  #tab-main .date-label,
+  #tab-main .mini-progress,
+  #tab-main .adhkar-widget,
+  #tab-main .tab-view-header {
+    max-width: 100%;
   }
 }
 
@@ -3889,7 +4124,7 @@ img, iframe, video {
 <div class="app" id="app">
 
   <!-- TOP BAR -->
-  <div class="top-bar" style="position:relative;">
+  <div class="top-bar">
     <div class="top-bar-title">سِباق الفِردَوس</div>
 
     <!-- Mini Progress Ring - center of top bar -->
@@ -4012,6 +4247,13 @@ img, iframe, video {
       <div style="font-family:'Scheherazade New',serif;font-size:15px;color:var(--gold);text-align:center;padding:12px;background:rgba(201,168,76,0.05);border-radius:10px;margin-bottom:14px;line-height:2.2;">
         ﴿ مَنْ عَمِلَ صَالِحًا فَلِنَفْسِهِ ﴾<br>
         <span style="font-size:11px;color:var(--text-muted);font-family:'Noto Naskh Arabic',serif;">فصلت: ٤٦</span>
+      </div>
+
+      <!-- رسالة الصدقة -->
+      <div style="background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(4,120,87,0.08));border:1px solid rgba(201,168,76,0.25);border-radius:14px;padding:16px 14px;margin-bottom:14px;text-align:center;">
+        <div style="font-size:26px;margin-bottom:8px;">🤲</div>
+        <div style="font-family:'Amiri',serif;font-size:15px;color:var(--gold);margin-bottom:6px;line-height:1.9;">صدقةٌ على روح والدي</div>
+        <div style="font-size:13px;color:var(--text-dim);line-height:2.1;">أسألكم الدعاء له بالرحمة والمغفرة<br>اللهم اغفر له وارحمه وأسكنه فسيح جناتك 🌿</div>
       </div>
 
       <!-- Contact -->
@@ -4149,7 +4391,7 @@ img, iframe, video {
   <div class="tab-content" id="tab-library">
     <div class="tab-view-header">
       <span class="tab-view-header-icon">📚</span>
-      <span class="tab-view-header-title">المكتبة الإسلامية</span>
+      <span class="tab-view-header-title">المكتبة الروحية</span>
     </div>
     <div class="quran-verse">
       ﴿ وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا ﴾
@@ -5791,6 +6033,12 @@ window.toggleDeed = function(id, period, e) {
   // Adhkar deeds: always toggle expand (never manual check)
   const isAdhkarDeed = (id === 'adhkar_morning' || id === 'adhkar_evening');
   if (isAdhkarDeed) {
+    // في الجوال الأفقي: افتح شاشة كاملة بدلاً من الـ expand
+    const isLandscapeMobile = window.matchMedia('(orientation: landscape) and (max-width: 767px)').matches;
+    if (isLandscapeMobile) {
+      window.openAdhkarFullscreen(id);
+      return;
+    }
     const expand = document.getElementById('expand-' + id);
     if (expand) expand.classList.toggle('open');
     return;
@@ -5959,9 +6207,6 @@ window.saveNewTask = function() {
 function renderAchievements() {
   const domains = [
     { key:'religion', label:'الدين', icon:'🕌', color:'#C9A84C' },
-    { key:'work', label:'العمل', icon:'💼', color:'#3B82F6' },
-    { key:'family', label:'الأسرة', icon:'👨‍👩‍👧', color:'#8B5CF6' },
-    { key:'productivity', label:'الإنتاجية', icon:'⚡', color:'#F59E0B' },
   ];
 
   // ---- Streak Card ----
@@ -9200,7 +9445,190 @@ document.addEventListener('DOMContentLoaded', function() {
   window.render();
   showOpeningOverlay();
 });
+
+// ============================================================
+// فتح بطاقة الذكر شاشة كاملة في الوضع الأفقي على الجوال
+// ============================================================
+window.openDhikrFullscreen = function(id, num, text, count, cur) {
+  const modal = document.getElementById('dhikrFullscreenModal');
+  const numEl = document.getElementById('dhikrFullscreenNum');
+  const textEl = document.getElementById('dhikrFullscreenText');
+  const metaEl = document.getElementById('dhikrFullscreenMeta');
+  if (!modal) return;
+  numEl.textContent = 'ذكر ' + num;
+  textEl.textContent = text;
+  const done = cur >= count;
+  const countLabel = count === 1 ? 'مرة واحدة' : count + ' مرة';
+  if (count > 1) {
+    metaEl.innerHTML = `
+      <div style="display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:10px;">
+        <div style="font-size:13px;background:rgba(201,168,76,0.15);color:var(--gold);padding:4px 14px;border-radius:20px;">${countLabel}</div>
+        <div style="font-size:22px;color:${done?'var(--emerald-light)':'var(--text-dim)'};">${cur} / ${count}</div>
+      </div>
+      <button onclick="window.tapTasbeeh('${id}',${count});window.updateFullscreenCounter('${id}',${count})" 
+        style="margin-top:18px;width:72px;height:72px;border-radius:50%;background:rgba(201,168,76,0.15);border:2px solid var(--gold-dark);color:var(--gold);font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:auto;margin-right:auto;transition:transform 0.1s;" 
+        id="fullscreen-tasbeeh-btn">${done ? '✅' : '📿'}</button>`;
+  } else {
+    metaEl.innerHTML = `
+      <div style="margin-top:14px;">
+        <div style="font-size:13px;background:rgba(201,168,76,0.15);color:var(--gold);padding:4px 14px;border-radius:20px;display:inline-block;">${countLabel}</div>
+      </div>
+      <button onclick="window.tapTasbeeh('${id}',1);window.updateFullscreenCounter('${id}',1)" 
+        style="margin-top:18px;padding:12px 40px;border-radius:24px;background:rgba(201,168,76,0.15);border:2px solid var(--gold-dark);color:var(--gold);font-size:16px;cursor:pointer;transition:transform 0.1s;">
+        ${done ? '✅ تم' : '☑️ تم'}
+      </button>`;
+  }
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.updateFullscreenCounter = function(id, maxCount) {
+  const cur = (window.state && window.state.adhkarCounts && window.state.adhkarCounts[id]) || 0;
+  const done = cur >= maxCount;
+  const countEl = document.querySelector('#dhikrFullscreenMeta div[style*="font-size:22px"]');
+  if (countEl) countEl.textContent = cur + ' / ' + maxCount;
+  const btn = document.getElementById('fullscreen-tasbeeh-btn');
+  if (btn && done) btn.textContent = '✅';
+};
+
+window.closeDhikrFullscreen = function() {
+  const modal = document.getElementById('dhikrFullscreenModal');
+  if (modal) modal.classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+// ربط النقر على بطاقات الذكر في الوضع الأفقي
+document.addEventListener('click', function(e) {
+  const isLandscape = window.matchMedia('(orientation: landscape) and (max-width: 767px)').matches;
+  if (!isLandscape) return;
+  const card = e.target.closest('.dhikr-card');
+  if (!card) return;
+  // لا نفتح المودال لو ضغط على زر التسبيح مباشرة
+  if (e.target.closest('.tasbeeh-btn, .tasbeeh-btn-lg, .tasbeeh-reset')) return;
+  const id = card.id.replace('dhikr-', '');
+  const numEl = card.querySelector('span[style*="border-radius:50%"]');
+  const num = numEl ? numEl.textContent.trim() : '';
+  const textEl = card.querySelector('.dhikr-text');
+  const text = textEl ? textEl.textContent.trim() : '';
+  const counterEl = card.querySelector('.tasbeeh-counter-text span');
+  let cur = 0, maxCount = 1;
+  if (counterEl) {
+    const parts = counterEl.textContent.split('/');
+    cur = parseInt(parts[0]) || 0;
+    maxCount = parseInt(parts[1]) || 1;
+  }
+  const countBadge = card.querySelector('.dhikr-count-badge');
+  if (countBadge) {
+    const txt = countBadge.textContent.trim();
+    if (txt === 'مرة واحدة') maxCount = 1;
+    else maxCount = parseInt(txt) || 1;
+  }
+  window.openDhikrFullscreen(id, num, text, maxCount, cur);
+});
+
+// ============================================================
+// فتح قائمة أذكار الصباح/المساء كاملة في الجوال الأفقي
+// ============================================================
+window.openAdhkarFullscreen = function(deedId) {
+  const type = deedId === 'adhkar_morning' ? 'morning' : 'evening';
+  const list = type === 'morning' ? ADHKAR_MORNING : ADHKAR_EVENING;
+  const title = type === 'morning' ? '🌅 أذكار الصباح' : '🌙 أذكار المساء';
+  const modal = document.getElementById('adhkarListFullscreen');
+  const titleEl = document.getElementById('adhkarListFsTitle');
+  const body = document.getElementById('adhkarListFsBody');
+  if (!modal) return;
+  titleEl.textContent = title;
+  modal.dataset.type = type;
+  modal.dataset.deedId = deedId;
+  window.renderAdhkarFullscreenBody();
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.renderAdhkarFullscreenBody = function() {
+  const modal = document.getElementById('adhkarListFullscreen');
+  if (!modal || !modal.classList.contains('open')) return;
+  const type = modal.dataset.type;
+  const deedId = modal.dataset.deedId;
+  const list = type === 'morning' ? ADHKAR_MORNING : ADHKAR_EVENING;
+  const counts = (state && state.adhkarCounts) || {};
+  const doneCount = list.filter(d => (counts[d.id]||0) >= d.count).length;
+  const progressEl = document.getElementById('adhkarListFsProgress');
+  if (progressEl) progressEl.textContent = `أكملت ${doneCount} / ${list.length}`;
+  let html = '';
+  list.forEach((d, idx) => {
+    const cur = counts[d.id] || 0;
+    const done = cur >= d.count;
+    const needsTasbeeh = d.count > 1;
+    html += `<div class="adhkar-list-fs-item ${done?'done':''}" id="fscard-${d.id}">
+      <div class="adhkar-list-fs-item-head">
+        <span class="adhkar-list-fs-item-num">${idx+1}</span>
+        ${d.label?`<span style="color:var(--gold-light);font-size:12px;">${d.label}</span>`:''}
+        ${done?'<span style="color:var(--emerald-light);font-size:11px;margin-right:auto;">✅ مكتمل</span>':''}
+      </div>
+      <div class="adhkar-list-fs-item-text">${d.text}</div>
+      <div class="adhkar-list-fs-item-footer">
+        <span style="font-size:12px;padding:4px 12px;background:rgba(201,168,76,0.15);border-radius:14px;color:var(--gold);font-weight:600;">${d.count > 1 ? d.count+' مرة' : 'مرة واحدة'}</span>
+        ${needsTasbeeh ? `
+        <div class="tasbeeh-wrap tasbeeh-wrap-lg">
+          <button class="tasbeeh-btn tasbeeh-btn-lg ${done?'done-all':''}" onclick="event.stopPropagation();window.tapAdhkarInDeed('${d.id}',${d.count},'${type}','${deedId}');window.renderAdhkarFullscreenBody()">
+            ${done ? '✅' : '📿'}
+          </button>
+          <div class="tasbeeh-progress-wrap">
+            <div class="tasbeeh-counter-text"><span>${cur} / ${d.count}</span></div>
+            <div class="tasbeeh-bar-bg">
+              <div class="tasbeeh-bar-fill" style="width:${Math.min((cur/d.count)*100,100)}%"></div>
+            </div>
+          </div>
+        </div>` : `
+        <button class="tasbeeh-btn ${done?'done-all':''}" style="width:auto;min-height:44px;border-radius:22px;padding:0 26px;font-size:15px;font-weight:600;" onclick="event.stopPropagation();window.tapAdhkarInDeed('${d.id}',1,'${type}','${deedId}');window.renderAdhkarFullscreenBody()">
+          ${done ? '✅ تم' : '☑️ تم'}
+        </button>`}
+      </div>
+    </div>`;
+  });
+  document.getElementById('adhkarListFsBody').innerHTML = html;
+};
+
+window.closeAdhkarFullscreen = function() {
+  const modal = document.getElementById('adhkarListFullscreen');
+  if (modal) modal.classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+// إغلاق تلقائي عند الخروج من الوضع الأفقي
+window.addEventListener('orientationchange', function() {
+  setTimeout(function() {
+    const isLandscapeMobile = window.matchMedia('(orientation: landscape) and (max-width: 767px)').matches;
+    if (!isLandscapeMobile) {
+      window.closeAdhkarFullscreen();
+      window.closeDhikrFullscreen && window.closeDhikrFullscreen();
+    }
+  }, 200);
+});
 </script>
+
+<!-- مودال عرض الذكر شاشة كاملة (للوضع الأفقي على الجوال) -->
+<div class="dhikr-fullscreen-modal" id="dhikrFullscreenModal">
+  <button class="dhikr-fullscreen-close" onclick="window.closeDhikrFullscreen()">✕</button>
+  <div class="dhikr-fullscreen-inner">
+    <div class="dhikr-fullscreen-num" id="dhikrFullscreenNum"></div>
+    <div class="dhikr-fullscreen-text" id="dhikrFullscreenText"></div>
+    <div id="dhikrFullscreenMeta"></div>
+  </div>
+</div>
+
+<!-- مودال قائمة أذكار الصباح/المساء كاملة (للوضع الأفقي على الجوال) -->
+<div class="adhkar-list-fullscreen" id="adhkarListFullscreen">
+  <div class="adhkar-list-fs-header">
+    <div>
+      <div class="adhkar-list-fs-title" id="adhkarListFsTitle">أذكار الصباح</div>
+      <div class="adhkar-list-fs-progress" id="adhkarListFsProgress">0 / 0</div>
+    </div>
+    <button class="adhkar-list-fs-close" onclick="window.closeAdhkarFullscreen()">✕</button>
+  </div>
+  <div class="adhkar-list-fs-body" id="adhkarListFsBody"></div>
+</div>
 
 <!-- شريط اختر الذكر الذكي — يظهر بعد ١٠ تسبيحات -->
 <div class="tasbih-dhikr-bar" id="tasbihDhikrBar" onclick="window.tasbihNavOpenPopup()">
