@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0A0E1A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -62,177 +62,6 @@ body::before {
 }
 
 .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; }
-
-/* =====================================================================
-   📱💻 RESPONSIVE DESIGN — Tablet / Desktop / Landscape
-   يوسّع التطبيق ليستفيد من الشاشات الكبيرة والوضع الأفقي
-   ===================================================================== */
-
-/* ===== Tablets & medium screens (≥ 700px) ===== */
-@media (min-width: 700px) {
-  .app {
-    max-width: 720px;
-    padding: 0 12px;
-  }
-  .bottom-nav {
-    max-width: 720px;
-    border-radius: 20px 20px 0 0;
-  }
-  .top-bar,
-  .search-bar-wrap,
-  .search-box,
-  .modal-sheet {
-    max-width: 720px !important;
-  }
-  /* بطاقات الإنجازات تُوزَّع على أعمدة */
-  .domain-ach-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  /* تكبير خطوط الرأس */
-  .header h1 { font-size: 30px; }
-  .header .subtitle { font-size: 14px; }
-}
-
-/* ===== Desktop & large tablets (≥ 1024px) — تخطيط عمودين ===== */
-@media (min-width: 1024px) {
-  .app {
-    max-width: 1100px;
-    padding: 0 20px;
-  }
-  /* bottom-nav تبقى ثابتة في الأسفل لكن أعرض */
-  .bottom-nav {
-    max-width: 1100px;
-    border-radius: 24px 24px 0 0;
-  }
-  .top-bar,
-  .search-bar-wrap,
-  .search-box {
-    max-width: 1100px !important;
-  }
-  .modal-sheet {
-    max-width: 560px !important;
-    border-radius: 20px !important;
-    margin-bottom: 40px;
-  }
-  /* تحويل tab-content الرئيسية إلى grid عمودين على الديسكتوب */
-  .tab-content.active#tab-main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    align-items: start;
-  }
-  /* العناصر التي يجب أن تمتد على كامل العرض */
-  .tab-content.active#tab-main > .header,
-  .tab-content.active#tab-main > .domain-selector,
-  .tab-content.active#tab-main > .date-label,
-  .tab-content.active#tab-main > .tab-view-header,
-  .tab-content.active#tab-main > .horizontal-calendar,
-  .tab-content.active#tab-main > .opening-overlay,
-  .tab-content.active#tab-main > .period-tabs,
-  .tab-content.active#tab-main > .mini-progress,
-  .tab-content.active#tab-main > .adhkar-widget,
-  .tab-content.active#tab-main > .daily-lecture-widget {
-    grid-column: 1 / -1;
-  }
-  /* الإنجازات: عرض أوسع ومزيد من الأعمدة */
-  .tasbih-ach-stats {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .tasbih-ach-chart {
-    height: 120px;
-  }
-  .tasbih-chart-bar {
-    max-width: 48px;
-  }
-  /* المكتبة والأسماء: أعمدة أكثر */
-  .names-grid {
-    grid-template-columns: repeat(5, 1fr) !important;
-  }
-  /* الحجم الأكبر للخط الرئيسي */
-  .header h1 { font-size: 34px; }
-}
-
-/* ===== شاشات عريضة جداً (≥ 1440px) ===== */
-@media (min-width: 1440px) {
-  .app {
-    max-width: 1280px;
-  }
-  .bottom-nav {
-    max-width: 1280px;
-  }
-  .top-bar,
-  .search-bar-wrap,
-  .search-box {
-    max-width: 1280px !important;
-  }
-  .names-grid {
-    grid-template-columns: repeat(6, 1fr) !important;
-  }
-}
-
-/* ===== الوضع الأفقي على الأجهزة المتوسطة (768px+ أفقي) ===== */
-@media (orientation: landscape) and (min-width: 768px) and (max-height: 600px) {
-  body { padding-bottom: 70px; }
-  .app {
-    max-width: 100%;
-    padding: 0 24px;
-  }
-  .bottom-nav {
-    max-width: 100%;
-    padding: 4px 0 env(safe-area-inset-bottom, 4px);
-  }
-  .bottom-btn {
-    padding: 4px 8px;
-  }
-  /* شاشة الأذكار في الوضع الأفقي: عمودين */
-  #tab-adhkar .dhikr-card,
-  #tab-qurandhikr .dhikr-card {
-    display: inline-block;
-    width: calc(50% - 8px);
-    margin-right: 4px;
-    margin-left: 4px;
-    vertical-align: top;
-  }
-  /* الرأس والعنوان أصغر في الوضع الأفقي */
-  .header { padding: 10px 20px 8px; }
-  .header h1 { font-size: 22px; }
-  .header .subtitle { font-size: 11px; }
-  /* البطاقات العلوية (streak + chart + achievements) عمودين */
-  #tab-achievements .streak-card,
-  #tab-achievements .week-chart-card,
-  #tab-achievements .tasbih-ach-card {
-    max-width: 680px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-/* ===== إصلاحات للوضع الأفقي على الهاتف (landscape mobile, < 768px) ===== */
-@media (orientation: landscape) and (max-width: 767px) {
-  body { padding-bottom: 75px; }
-  .header { padding: 8px 16px 6px; }
-  .header h1 { font-size: 20px; }
-  .header .subtitle { font-size: 11px; }
-  .bottom-nav { padding: 4px 0 env(safe-area-inset-bottom, 4px); }
-  .bottom-btn { padding: 4px 8px; font-size: 10px; }
-  .date-label { margin-bottom: 8px; padding: 4px 10px; }
-  /* تقليل المسافات بين البطاقات */
-  .deed-card { margin-bottom: 8px; }
-}
-
-/* ===== تحسينات عامة للشاشات اللمسية والماوس ===== */
-@media (hover: hover) {
-  .deed-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-  }
-  .bottom-btn:hover {
-    color: var(--gold-light);
-  }
-  .tasbih-nav-ring:hover {
-    filter: brightness(1.1);
-  }
-}
 
 /* ===== HEADER ===== */
 .header {
@@ -1030,123 +859,6 @@ body.light-mode .theme-toggle .toggle-ball { transform: translateX(18px); }
   transition: width 0.8s ease;
 }
 
-/* ===== TASBIH ACHIEVEMENT CARD ===== */
-.tasbih-ach-card {
-  background: linear-gradient(135deg, rgba(4,120,87,0.10), rgba(201,168,76,0.06));
-  border: 1px solid rgba(4,120,87,0.22);
-  border-radius: 18px;
-  padding: 18px 16px;
-  margin: 10px 0 16px;
-  box-shadow: 0 4px 18px rgba(4,120,87,0.10);
-}
-.tasbih-ach-today {
-  text-align: center;
-  padding: 14px 10px 10px;
-  background: radial-gradient(circle at center, rgba(201,168,76,0.14), transparent 70%);
-  border-radius: 14px;
-  margin-bottom: 14px;
-}
-.tasbih-ach-today-num {
-  font-family: 'Amiri', serif;
-  font-size: 44px;
-  font-weight: 700;
-  color: var(--gold);
-  text-shadow: 0 0 24px rgba(201,168,76,0.35);
-  line-height: 1.1;
-}
-.tasbih-ach-today-label {
-  font-size: 13px;
-  color: var(--gold-light);
-  margin-top: 4px;
-  opacity: 0.9;
-}
-.tasbih-ach-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.tasbih-ach-stat {
-  text-align: center;
-  background: rgba(4,120,87,0.08);
-  border-radius: 10px;
-  padding: 10px 4px;
-  border: 1px solid rgba(4,120,87,0.12);
-}
-.tasbih-ach-stat-num {
-  font-family: 'Amiri', serif;
-  font-size: 17px;
-  color: var(--emerald-light);
-  font-weight: 700;
-}
-.tasbih-ach-stat-label {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-.tasbih-ach-chart-title {
-  font-size: 13px;
-  color: var(--text-dim);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-}
-.tasbih-ach-chart {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 6px;
-  height: 80px;
-  padding: 0 4px;
-  margin-bottom: 8px;
-}
-.tasbih-chart-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  height: 100%;
-}
-.tasbih-chart-val {
-  font-size: 9px;
-  color: var(--text-dim);
-  margin-bottom: 2px;
-}
-.tasbih-chart-bar {
-  width: 100%;
-  max-width: 26px;
-  border-radius: 4px 4px 2px 2px;
-  transition: height 0.5s ease;
-  min-height: 3px;
-}
-.tasbih-chart-bar.today {
-  box-shadow: 0 0 10px rgba(201,168,76,0.4);
-  outline: 1px solid var(--gold);
-}
-.tasbih-chart-lbl {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-.tasbih-ach-hint {
-  text-align: center;
-  font-size: 11px;
-  color: var(--text-muted);
-  padding-top: 4px;
-  border-top: 1px dashed rgba(201,168,76,0.12);
-  margin-top: 6px;
-}
-/* Light mode overrides */
-body.light-mode .tasbih-ach-card {
-  background: linear-gradient(135deg, rgba(4,120,87,0.06), rgba(201,168,76,0.04));
-  border-color: rgba(4,120,87,0.15);
-}
-body.light-mode .tasbih-ach-stat {
-  background: rgba(4,120,87,0.04);
-  border-color: rgba(4,120,87,0.10);
-}
-
 /* ===== DATE LABEL ===== */
 .date-label {
   font-size: 12px;
@@ -1357,7 +1069,7 @@ body.light-mode .tasbih-ach-stat {
   padding: 12px 14px;
   color: var(--text);
   font-family: 'Noto Naskh Arabic', serif;
-  font-size: 16px; /* ≥16px يمنع iOS من التكبير التلقائي عند التركيز */
+  font-size: 14px;
   margin-bottom: 12px;
   outline: none;
   transition: border-color 0.3s;
@@ -2156,9 +1868,6 @@ body.light-mode .tasbih-ach-stat {
   transition: all 0.12s;
   flex-shrink: 0;
   user-select: none;
-  /* منع انحراف الصفحة عند النقر على المسبحة */
-  touch-action: manipulation;
-  overscroll-behavior: contain;
 }
 .tasbeeh-btn:active { transform: scale(0.88); background: rgba(201,168,76,0.3); }
 .tasbeeh-btn.done-all { background: rgba(4,120,87,0.2); border-color: var(--emerald-light); color: var(--emerald-light); }
@@ -2170,8 +1879,6 @@ body.light-mode .tasbih-ach-stat {
   height: 110px;
   font-size: 48px;
   border-width: 3px;
-  /* منع تام للـ scroll عبر المسبحة الكبيرة */
-  touch-action: none;
   box-shadow:
     0 0 0 3px rgba(201,168,76,0.08),
     0 6px 20px rgba(201,168,76,0.25),
@@ -2952,8 +2659,7 @@ body { padding-bottom: 100px; }
   align-items: center;
   justify-content: center;
   transition: transform 0.15s;
-  touch-action: none; /* منع تام للـ scroll/zoom عبر المسبحة */
-  overscroll-behavior: contain;
+  touch-action: manipulation; /* يمنع zoom عند النقر السريع */
   -webkit-user-select: none;
   user-select: none;
 }
@@ -3016,9 +2722,6 @@ body { padding-bottom: 100px; }
   width: 82px;
   height: 82px;
   border-radius: 50%;
-  /* منع أي تفاعل مع الصفحة (scroll/zoom) عند اللمس */
-  touch-action: none;
-  overscroll-behavior: contain;
   background: radial-gradient(circle at 38% 28%,
     #1e3a22 0%,
     #0d1f10 60%,
@@ -3589,51 +3292,6 @@ html { scroll-behavior: smooth; }
 /* تنعيم حواف البطاقات */
 .dhikr-card, .deed-card, .lecture-card {
   will-change: transform;
-}
-
-/* ============================================================
-   RESPONSIVE — تحسينات إضافية مكملة للـ media queries في الأعلى
-   (التخطيط الأساسي معرف في بداية الملف ≥1024px)
-   ============================================================ */
-
-/* ========== منع التمدد الأفقي على أي شاشة (يمنع overflow) ========== */
-html, body {
-  overflow-x: hidden;
-  max-width: 100%;
-}
-
-/* الصور والفيديو والإطارات مرنة دائماً */
-img, iframe, video {
-  max-width: 100%;
-  height: auto;
-}
-
-/* ========== TABLET — ≥768px (حدث متوسط بين الجوال والديسكتوب) ========== */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .app {
-    max-width: 720px;
-    padding: 0 14px;
-  }
-  .bottom-nav,
-  .top-bar,
-  .search-bar-wrap {
-    max-width: 720px;
-  }
-  /* شبكة الأسماء ٣ أعمدة بدل ٢ */
-  .names-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-  .header h1 { font-size: 30px; }
-}
-
-/* ========== تأكيد إضافي: بطاقة التسبيحات مرنة في كل المقاسات ========== */
-@media (max-width: 480px) {
-  .tasbih-ach-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .tasbih-ach-today-num {
-    font-size: 36px;
-  }
 }
 </style>
 </head>
@@ -4987,53 +4645,12 @@ let state = {
   taskOrder: {},
   quranDone: {},
   appStartDate: null,
-  watchedLectures: {},
-  // تسبيحات تراكمية يومية (key: date string, value: عدد التسبيحات في اليوم)
-  // يحتفظ بآخر 400 يوم تلقائياً لتوفير المساحة
-  tasbihDaily: {},
-  tasbihTotal: 0  // إجمالي تسبيحات منذ بداية استخدام التطبيق
+  watchedLectures: {}
 };
 
 let currentDomain = 'religion';
 let currentPeriod = 'today';
 let currentNameIdx = -1;
-
-// ============================================================
-// TASBIH TRACKING — تتبع التسبيحات التراكمي اليومي (400 يوم)
-// ============================================================
-function pruneTasbihDaily(data) {
-  // يحتفظ بآخر 400 يوم فقط (أكثر من عام بقليل لضمان تغطية كاملة)
-  if (!data || typeof data !== 'object') return {};
-  const now = new Date();
-  const cutoff = new Date(now);
-  cutoff.setDate(cutoff.getDate() - 400);
-  const cutoffTime = cutoff.getTime();
-  const cleaned = {};
-  for (const key in data) {
-    const d = new Date(key);
-    if (!isNaN(d.getTime()) && d.getTime() >= cutoffTime) {
-      cleaned[key] = data[key];
-    }
-  }
-  return cleaned;
-}
-
-// دالة مركزية لتسجيل تسبيحة واحدة — تُستدعى من كل مواضع العدّ
-// تحفظ البيانات في state + localStorage (+ Firestore عند تسجيل الدخول)
-// مع debounce للحفظ لتجنّب كتابة متكررة على كل نقرة سبحة
-let _tasbihSaveTimer = null;
-window.recordTasbih = function(n) {
-  n = Math.max(1, Math.floor(n || 1));
-  if (!state.tasbihDaily) state.tasbihDaily = {};
-  const key = new Date().toDateString();
-  state.tasbihDaily[key] = (state.tasbihDaily[key] || 0) + n;
-  state.tasbihTotal = (state.tasbihTotal || 0) + n;
-  // حفظ debounced — كل 800ms من آخر تسبيحة (يتحمّل الضغط السريع)
-  if (_tasbihSaveTimer) clearTimeout(_tasbihSaveTimer);
-  _tasbihSaveTimer = setTimeout(() => {
-    if (typeof window.saveState === 'function') window.saveState();
-  }, 800);
-};
 
 function loadLocalState() {
   try {
@@ -5064,20 +4681,13 @@ function loadLocalState() {
         taskEdits: s.taskEdits||{}, catEdits: s.catEdits||{},
         taskOrder: s.taskOrder||{}, quranDone: s.quranDone||{},
         appStartDate: s.appStartDate||null, watchedLectures: s.watchedLectures||{},
-        // التسبيحات: تراكمية لمدة 400 يوم ثم تُنظَّف الأقدم تلقائياً
-        tasbihDaily: pruneTasbihDaily(s.tasbihDaily || {}),
-        tasbihTotal: s.tasbihTotal || 0,
         streakAwardedToday: false
       };
     } else {
       state = { ...state, ...s };
-      // ضمان وجود حقول التسبيح بعد استرجاع البيانات
-      if (!state.tasbihDaily || typeof state.tasbihDaily !== 'object') state.tasbihDaily = {};
-      state.tasbihDaily = pruneTasbihDaily(state.tasbihDaily);
-      if (typeof state.tasbihTotal !== 'number') state.tasbihTotal = 0;
     }
   } catch {
-    state = { date: TODAY, completed:{}, completedByPeriod:{}, streak:0, totalAllTime:0, namesPrayed:[], heartDone:{}, maqamDone:{}, weekData:{}, customTasks:[], taskEdits:{}, streakAwardedToday: false, tasbihDaily:{}, tasbihTotal:0 };
+    state = { date: TODAY, completed:{}, completedByPeriod:{}, streak:0, totalAllTime:0, namesPrayed:[], heartDone:{}, maqamDone:{}, weekData:{}, customTasks:[], taskEdits:{}, streakAwardedToday: false };
   }
 }
 
@@ -5871,82 +5481,6 @@ function renderAchievements() {
     </div>`;
   });
 
-  // ==================================================
-  // 📿 بطاقة التسبيحات — تراكمية يومية لمدة عام كامل
-  // ==================================================
-  const tasbihDaily = state.tasbihDaily || {};
-  const tasbihTotal = state.tasbihTotal || 0;
-  const todayKey = new Date().toDateString();
-  const tasbihToday = tasbihDaily[todayKey] || 0;
-
-  // حساب التسبيحات لآخر ٧ أيام
-  let tasbihLast7 = 0;
-  const last7Days = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(now); d.setDate(d.getDate() - i);
-    const k = d.toDateString();
-    const v = tasbihDaily[k] || 0;
-    tasbihLast7 += v;
-    last7Days.push({ label: dayNamesShort[d.getDay()], count: v, isToday: i === 0 });
-  }
-
-  // حساب آخر ٣٠ يوم + السنة كاملة
-  let tasbihLast30 = 0, tasbihYear = 0;
-  const yearAgo = new Date(now); yearAgo.setDate(yearAgo.getDate() - 365);
-  const monthAgo = new Date(now); monthAgo.setDate(monthAgo.getDate() - 30);
-  for (const k in tasbihDaily) {
-    const d = new Date(k);
-    if (isNaN(d.getTime())) continue;
-    if (d >= yearAgo) tasbihYear += tasbihDaily[k];
-    if (d >= monthAgo) tasbihLast30 += tasbihDaily[k];
-  }
-
-  // أعلى يوم في آخر ٧ أيام — للرسم البياني
-  const maxTasbih7 = Math.max(...last7Days.map(d => d.count), 1);
-  const avgTasbih7 = Math.round(tasbihLast7 / 7);
-
-  html += `<div style="font-family:'Amiri',serif;font-size:17px;color:var(--gold);margin:18px 0 10px;">📿 التسبيح والذكر</div>`;
-  html += `<div class="tasbih-ach-card">
-    <div class="tasbih-ach-today">
-      <div class="tasbih-ach-today-num">${tasbihToday.toLocaleString('ar-EG')}</div>
-      <div class="tasbih-ach-today-label">تسبيحة اليوم 🌟</div>
-    </div>
-    <div class="tasbih-ach-stats">
-      <div class="tasbih-ach-stat">
-        <div class="tasbih-ach-stat-num">${tasbihLast7.toLocaleString('ar-EG')}</div>
-        <div class="tasbih-ach-stat-label">آخر ٧ أيام</div>
-      </div>
-      <div class="tasbih-ach-stat">
-        <div class="tasbih-ach-stat-num">${tasbihLast30.toLocaleString('ar-EG')}</div>
-        <div class="tasbih-ach-stat-label">آخر ٣٠ يوم</div>
-      </div>
-      <div class="tasbih-ach-stat">
-        <div class="tasbih-ach-stat-num">${tasbihYear.toLocaleString('ar-EG')}</div>
-        <div class="tasbih-ach-stat-label">آخر سنة</div>
-      </div>
-      <div class="tasbih-ach-stat">
-        <div class="tasbih-ach-stat-num">${tasbihTotal.toLocaleString('ar-EG')}</div>
-        <div class="tasbih-ach-stat-label">الإجمالي</div>
-      </div>
-    </div>
-    <div class="tasbih-ach-chart-title">
-      رسم ٧ أيام
-      <span style="font-size:11px;color:var(--text-muted);margin-right:auto;">متوسط: ${avgTasbih7.toLocaleString('ar-EG')}/يوم</span>
-    </div>
-    <div class="tasbih-ach-chart">`;
-  last7Days.forEach(d => {
-    const h = Math.round((d.count / maxTasbih7) * 60);
-    const color = d.count >= 100 ? 'var(--emerald-light)' : d.count >= 33 ? 'var(--gold)' : d.count > 0 ? 'var(--accent-amber)' : 'rgba(201,168,76,0.2)';
-    html += `<div class="tasbih-chart-col">
-      ${d.count > 0 ? `<div class="tasbih-chart-val">${d.count.toLocaleString('ar-EG')}</div>` : ''}
-      <div class="tasbih-chart-bar ${d.isToday ? 'today' : ''}" style="height:${Math.max(h, 3)}px;background:${color};"></div>
-      <div class="tasbih-chart-lbl">${d.label}</div>
-    </div>`;
-  });
-  html += `</div>
-    <div class="tasbih-ach-hint">💡 تُحفظ التسبيحات تراكمياً لمدة عام كامل</div>
-  </div>`;
-
   document.getElementById('achievementsContainer').innerHTML = html;
 }
 
@@ -6490,32 +6024,13 @@ onAuthStateChanged(auth, async (user) => {
     if (docSnap.exists()) {
       const cloud = docSnap.data();
       if (cloud.date === TODAY) {
-        // نفس اليوم → استرجاع كامل بما فيه مهام اليوم
         state = {...state, ...cloud};
       } else {
-        // يوم جديد → استرجاع كل البيانات التراكمية الدائمة،
-        // مع تصفير مهام اليوم فقط (completed).
-
-        // ── إحصائيات السنة/الأسبوع/السلسلة ──
-        state.totalAllTime      = cloud.totalAllTime      ?? 0;
-        state.weekData          = cloud.weekData          ?? {};
-        state.streak            = cloud.streak            ?? 0;
-        state.customTasks       = cloud.customTasks       ?? [];
-        state.completedByPeriod = cloud.completedByPeriod ?? {};
-
-        // ── التسبيحات (تراكمي + اليومي إن وُجد) ──
-        state.tasbihTotal       = cloud.tasbihTotal       ?? 0;
-        state.tasbihDaily       = cloud.tasbihDaily       ?? {};
-
-        // ── إنجازات المكتبة التراكمية ──
-        state.namesPrayed       = cloud.namesPrayed       ?? [];
-        state.heartDone         = cloud.heartDone         ?? [];
-        state.maqamDone         = cloud.maqamDone         ?? [];
-        state.watchedLectures   = cloud.watchedLectures   ?? [];
-
-        // ── تصفير مهام اليوم الجديد ──
-        state.completed = {};
-        state.date      = TODAY;
+        state.totalAllTime = cloud.totalAllTime||0;
+        state.weekData = cloud.weekData||{};
+        state.streak = cloud.streak||0;
+        state.customTasks = cloud.customTasks||[];
+        state.completedByPeriod = cloud.completedByPeriod||{};
       }
       localStorage.setItem('firdaws_v2', JSON.stringify(state));
     } else {
@@ -6528,6 +6043,7 @@ onAuthStateChanged(auth, async (user) => {
     info.style.display = 'none';
   }
 });
+
 // ============================================================
 // ADHKAR DATA
 // ============================================================
@@ -6784,11 +6300,6 @@ window.tapTasbeeh = function(id, maxCount) {
   state.adhkarCounts[id] = cur + 1;
   const newCur = state.adhkarCounts[id];
   const done = newCur >= maxCount;
-
-  // تسجيل تسبيحة واحدة في العدّاد التراكمي اليومي
-  if (typeof window.recordTasbih === 'function') {
-    window.recordTasbih(1);
-  }
 
   // Sound + vibration
   if (done) {
@@ -7155,11 +6666,6 @@ window.tapDeedTasbeeh = function(id, maxCount) {
   state.adhkarCounts[id] = cur + 1;
   const newCur = state.adhkarCounts[id];
   const done = newCur >= maxCount;
-
-  // تسجيل التسبيحة في العدّاد التراكمي اليومي (للإنجازات)
-  if (typeof window.recordTasbih === 'function') {
-    window.recordTasbih(1);
-  }
 
   // Sound + vibration
   if (done) {
@@ -8650,11 +8156,6 @@ function updateDailyPlanBadge() {
     tnState.count++;
     tnState.total++;
 
-    // تسجيل التسبيحة في العدّاد التراكمي اليومي (للإنجازات)
-    if (typeof window.recordTasbih === 'function') {
-      window.recordTasbih(1);
-    }
-
     // تأثير النبض
     const ring = document.getElementById('tasbihNavRing');
     if (ring) {
@@ -8762,12 +8263,9 @@ function updateDailyPlanBadge() {
     }, { passive: false });
 
     btn.addEventListener('touchmove', function(e) {
-      // منع أي انحراف للصفحة أثناء لمس دائرة المسبحة
-      e.preventDefault();
-      e.stopPropagation();
       const t = e.touches[0];
       if (t) _handleMove(t.clientX, t.clientY);
-    }, { passive: false });
+    }, { passive: true });
 
     btn.addEventListener('touchend', function(e) {
       e.preventDefault();
@@ -8814,15 +8312,6 @@ function updateDailyPlanBadge() {
     btn.addEventListener('contextmenu', function(e) {
       e.preventDefault();
     });
-
-    // ===== منع انحراف الصفحة عند النقر على أي مسبحة كبيرة (الأذكار والأدعية) =====
-    // يستخدم event delegation لأن هذه الأزرار تُنشأ ديناميكياً
-    document.addEventListener('touchmove', function(e) {
-      const target = e.target.closest('.tasbeeh-btn-lg, .tasbih-nav-ring, .bottom-progress-wrap');
-      if (target) {
-        e.preventDefault();
-      }
-    }, { passive: false });
   });
 
   window.tasbihNavOpenPopup = function() {
