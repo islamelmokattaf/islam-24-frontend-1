@@ -122,7 +122,7 @@ function SmallCard({ article }: { article: Article }) {
 }
 
 // Dropdown for parent categories like الإدمان
-function DropdownNavItem({ name, children }: { name: string; children: { name: string; slug: string }[] }) {
+function DropdownNavItem({ name, items }: { name: string; items: { name: string; slug: string }[] }) {
   return (
     <div className="relative group flex-shrink-0">
       <span className="text-emerald-100 group-hover:text-amber-400 text-sm font-medium px-3 py-2.5 transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap">
@@ -130,7 +130,7 @@ function DropdownNavItem({ name, children }: { name: string; children: { name: s
         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
       </span>
       <div className="absolute top-full right-0 mt-0 bg-white rounded-b-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 min-w-[180px]">
-        {children.map(c => (
+        {items.map(c => (
           <Link key={c.slug} href={`/category/${c.slug}`}
             className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors whitespace-nowrap border-b border-gray-50 last:border-0">
             {c.name}
@@ -187,7 +187,7 @@ export default async function HomePage() {
             <Link href="/" className="flex-shrink-0 text-amber-400 text-sm font-bold px-3 py-2.5 border-b-2 border-amber-400">الرئيسية</Link>
             {navCategories.map((cat) => 
               cat.children ? (
-                <DropdownNavItem key={cat.slug} name={cat.name} children={cat.children} />
+                <DropdownNavItem key={cat.slug} name={cat.name} items={cat.children} />
               ) : (
                 <Link key={cat.slug} href={`/category/${cat.slug}`}
                   className="flex-shrink-0 text-emerald-100 hover:text-amber-400 text-sm font-medium px-3 py-2.5 transition-colors hover:bg-emerald-700/50 border-b-2 border-transparent hover:border-amber-400 whitespace-nowrap">
