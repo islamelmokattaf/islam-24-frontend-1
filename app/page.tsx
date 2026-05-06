@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getCategories, getFeaturedArticles, getArticlesByCategory, getMostRead } from "@/lib/api";
+import { getArticles, getCategories, getStrapiMediaUrl } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
-
-function getStrapiMedia(url?: string) {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
-  return `${process.env.NEXT_PUBLIC_STRAPI_URL?.replace("/api","") || ""}${url}`;
-}
 
 export const metadata: Metadata = {
   title: "islam-24.com — قرآن، سنة، أدعية، أذكار، أسماء الله الحسنى",
@@ -16,21 +10,20 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [categories, featured, mostRead] = await Promise.all([
-    getCategories(),
-    getFeaturedArticles(5),
-    getMostRead(15),
-  ]);
-
+  const categories = await getCategories();
+  
+  const featured = await getArticles({ featured: true, pageSize: 5 });
+  
   const sections = await Promise.all(
     categories.slice(0, 14).map(async (cat) => ({
       category: cat,
-      articles: await getArticlesByCategory(cat.slug, 7),
+      articles: await getArticles({ categorySlug: cat.slug, pageSize: 7 }),
     }))
   );
 
+  const mostRead = await getArticles({ pageSize: 15 });
+
   const activeSections = sections.filter((s) => s.articles.length > 0);
-  const STRAPI_MEDIA = process.env.NEXT_PUBLIC_STRAPI_URL?.replace("/api","") || "";
 
   return (
     <main>
@@ -41,10 +34,10 @@ export default async function HomePage() {
             <div className="text-amber-500 font-bold mb-4 text-lg">🔥 أحدث المواضيع</div>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {featured.slice(0, 5).map((art) => {
-                const img = getStrapiMedia(art.image_large?.url || art.image?.url);
+                const img = getStrapiMediaUrl(art.image_large?.url || (art as any).image?.url);
                 return (
                   <Link key={art.slug} href={`/article/${art.slug}`} className="group bg-white/10 rounded-xl overflow-hidden border border-white/10 hover:bg-white/20 transition-all hover:-translate-y-1">
-                    {img ? (
+                    {img && img !== "/placeholder.jpg" ? (
                       <img src={img} alt={art.title} className="w-full h-32 object-cover" />
                     ) : (
                       <div className="w-full h-32 bg-emerald-800 flex items-center justify-center text-4xl">☪</div>
@@ -82,7 +75,6 @@ export default async function HomePage() {
       {/* MAIN LAYOUT */}
       <div className="max-w-7xl mx-auto px-4 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
-          {/* CONTENT */}
           <div className="space-y-6">
             {activeSections.map(({ category, articles }, idx) => {
               const main = articles[0];
@@ -99,8 +91,8 @@ export default async function HomePage() {
                     {main && (
                       <div className="flex flex-col md:flex-row gap-4 mb-4 pb-4 border-b border-gray-100">
                         <Link href={`/article/${main.slug}`} className="shrink-0">
-                          {getStrapiMedia(main.image_large?.url || main.image?.url) ? (
-                            <img src={getStrapiMedia(main.image_large?.url || main.image?.url)} alt={main.title} className="w-full md:w-[380px] h-48 object-cover rounded-lg" />
+                          {getStrapiMediaUrl(main.image_large?.url || (main as any).image?.url) !== "/placeholder.jpg" ? (
+                            <img src={getStrapiMediaUrl(main.image_large?.url || (main as any).image?.url)} alt={main.title} className="w-full md:w-[380px] h-48 object-cover rounded-lg" />
                           ) : (
                             <div className="w-full md:w-[380px] h-48 bg-emerald-50 rounded-lg flex items-center justify-center text-5xl">📖</div>
                           )}
@@ -120,8 +112,8 @@ export default async function HomePage() {
                         {subs.map((sub) => (
                           <div key={sub.slug} className="flex gap-3">
                             <Link href={`/article/${sub.slug}`} className="shrink-0">
-                              {getStrapiMedia(sub.image_small?.url || sub.image?.url) ? (
-                                <img src={getStrapiMedia(sub.image_small?.url || sub.image?.url)} alt={sub.title} className="w-[132px] h-[101px] object-cover rounded-lg" />
+                              {getStrapiMediaUrl(sub.image_small?.url || (sub as any).image?.url) !== "/placeholder.jpg" ? (
+                                <img src={getStrapiMediaUrl(sub.image_small?.url || (sub as any).image?.url)} alt={sub.title} className="w-[132px] h-[101px] object-cover rounded-lg" />
                               ) : (
                                 <div className="w-[132px] h-[101px] bg-emerald-50 rounded-lg flex items-center justify-center text-3xl">📄</div>
                               )}
@@ -141,7 +133,6 @@ export default async function HomePage() {
             })}
           </div>
 
-          {/* SIDEBAR */}
           <aside className="space-y-5">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
               <h2 className="px-5 py-4 font-bold text-emerald-800 border-b-2 border-emerald-600">📊 الأكثر قراءة</h2>
