@@ -12,31 +12,35 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const categories = await getCategories();
   
-  const featured = await getArticles({ featured: true, pageSize: 5 });
+  const featuredRes = await getArticles({ featured: true, pageSize: 5 });
+  const featured = featuredRes.data || [];
   
   const sections = await Promise.all(
-    categories.slice(0, 14).map(async (cat) => ({
-      category: cat,
-      articles: await getArticles({ categorySlug: cat.slug, pageSize: 7 }),
-    }))
+    categories.slice(0, 14).map(async (cat) => {
+      const res = await getArticles({ categorySlug: cat.slug, pageSize: 7 });
+      return {
+        category: cat,
+        articles: res.data || [],
+      };
+    })
   );
 
-  const mostRead = await getArticles({ pageSize: 15 });
+  const mostReadRes = await getArticles({ pageSize: 15 });
+  const mostRead = mostReadRes.data || [];
 
   const activeSections = sections.filter((s) => s.articles.length > 0);
 
   return (
     <main>
-      {/* HERO */}
       {featured.length > 0 && (
         <section className="bg-gradient-to-bl from-emerald-900 to-emerald-950 text-white py-8 border-b-4 border-amber-600">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-amber-500 font-bold mb-4 text-lg">🔥 أحدث المواضيع</div>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              {featured.slice(0, 5).map((art) => {
-                const img = getStrapiMediaUrl(art.image_large?.url || (art as any).image?.url);
+              {featured.slice(0, 5).map((art: any) => {
+                const img = getStrapiMediaUrl(art.image_large?.url || art.image?.url);
                 return (
-                  <Link key={art.slug} href={`/article/${art.slug}`} className="group bg-white/10 rounded-xl overflow-hidden border border-white/10 hover:bg-white/20 transition-all hover:-translate-y-1">
+                  <Link key={art.slug || art.id} href={`/article/${art.slug}`} className="group bg-white/10 rounded-xl overflow-hidden border border-white/10 hover:bg-white/20 transition-all hover:-translate-y-1">
                     {img && img !== "/placeholder.jpg" ? (
                       <img src={img} alt={art.title} className="w-full h-32 object-cover" />
                     ) : (
@@ -54,7 +58,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* DAILY CONTENT */}
       <section className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
@@ -72,11 +75,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* MAIN LAYOUT */}
       <div className="max-w-7xl mx-auto px-4 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
           <div className="space-y-6">
-            {activeSections.map(({ category, articles }, idx) => {
+            {activeSections.map(({ category, articles }: any, idx: number) => {
               const main = articles[0];
               const subs = articles.slice(1, 7);
               return (
@@ -91,8 +93,8 @@ export default async function HomePage() {
                     {main && (
                       <div className="flex flex-col md:flex-row gap-4 mb-4 pb-4 border-b border-gray-100">
                         <Link href={`/article/${main.slug}`} className="shrink-0">
-                          {getStrapiMediaUrl(main.image_large?.url || (main as any).image?.url) !== "/placeholder.jpg" ? (
-                            <img src={getStrapiMediaUrl(main.image_large?.url || (main as any).image?.url)} alt={main.title} className="w-full md:w-[380px] h-48 object-cover rounded-lg" />
+                          {getStrapiMediaUrl(main.image_large?.url || main.image?.url) !== "/placeholder.jpg" ? (
+                            <img src={getStrapiMediaUrl(main.image_large?.url || main.image?.url)} alt={main.title} className="w-full md:w-[380px] h-48 object-cover rounded-lg" />
                           ) : (
                             <div className="w-full md:w-[380px] h-48 bg-emerald-50 rounded-lg flex items-center justify-center text-5xl">📖</div>
                           )}
@@ -109,11 +111,11 @@ export default async function HomePage() {
                     )}
                     {subs.length > 0 && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {subs.map((sub) => (
-                          <div key={sub.slug} className="flex gap-3">
+                        {subs.map((sub: any) => (
+                          <div key={sub.slug || sub.id} className="flex gap-3">
                             <Link href={`/article/${sub.slug}`} className="shrink-0">
-                              {getStrapiMediaUrl(sub.image_small?.url || (sub as any).image?.url) !== "/placeholder.jpg" ? (
-                                <img src={getStrapiMediaUrl(sub.image_small?.url || (sub as any).image?.url)} alt={sub.title} className="w-[132px] h-[101px] object-cover rounded-lg" />
+                              {getStrapiMediaUrl(sub.image_small?.url || sub.image?.url) !== "/placeholder.jpg" ? (
+                                <img src={getStrapiMediaUrl(sub.image_small?.url || sub.image?.url)} alt={sub.title} className="w-[132px] h-[101px] object-cover rounded-lg" />
                               ) : (
                                 <div className="w-[132px] h-[101px] bg-emerald-50 rounded-lg flex items-center justify-center text-3xl">📄</div>
                               )}
@@ -137,8 +139,8 @@ export default async function HomePage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
               <h2 className="px-5 py-4 font-bold text-emerald-800 border-b-2 border-emerald-600">📊 الأكثر قراءة</h2>
               <ol className="p-4 space-y-1">
-                {mostRead.slice(0, 10).map((art, i) => (
-                  <li key={art.slug}>
+                {mostRead.slice(0, 10).map((art: any, i: number) => (
+                  <li key={art.slug || art.id}>
                     <Link href={`/article/${art.slug}`} className="flex items-start gap-3 py-2 border-b border-gray-50 last:border-0 text-sm hover:text-emerald-700">
                       <span className="bg-emerald-600 text-white w-7 h-7 rounded flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
                       {art.title}
